@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.name = "librix"
   spec.version = Librix::VERSION
   spec.authors = ["Vinicius Coelho"]
-  spec.email = ["vinicius2001@gmail.com"]
+  spec.email = ["vinicoelho.dev@outlook.com"]
 
   spec.summary = "Gem to manage book search across multiple providers"
   spec.description = "Librix helps you search for books across multiple sources with a tiny, friendly API. Also, add more providers when you need them."
