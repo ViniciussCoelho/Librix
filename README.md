@@ -1,28 +1,111 @@
 # Librix
 
-TODO: Delete this and the text below, and describe your gem
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/librix`. To experiment with that code, run `bin/console` for an interactive prompt.
+Librix helps you search for books across multiple sources with a tiny, friendly API. Start with Google Books; add more providers when you need them.
 
 ## Installation
-
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
 
 Install the gem and add to the application's Gemfile by executing:
 
 ```bash
-bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+bundle add librix
 ```
 
 If bundler is not being used to manage dependencies, install the gem by executing:
 
 ```bash
-gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+gem install librix
 ```
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+require "librix"
+
+# Configure once (e.g., in an initializer)
+Librix.configure do |config|
+  config.google_books_api_key = ENV["GOOGLE_BOOKS_API_KEY"]
+  # Optional tuning
+  config.http_open_timeout = 2
+  config.http_read_timeout = 5
+  config.user_agent = "my-app/1.0"
+  # Default provider used by Librix.search
+  config.default_provider = :google_books
+end
+
+# Search (simple API)
+result = Librix.search(title: "Clean Code")
+
+# Pick a provider when you need to
+result = Librix.search({ title: "Clean Code" }, provider_key: :google_books)
+
+# Or get the provider instance
+provider = Librix.provider(:google_books)
+result = provider.search(title: "Pragmatic Programmer")
+```
+
+## Requirements
+
+- Ruby 3.1+ (3.2+ recommended).
+- Dependencies: `httparty` (runtime), `rake`, `rspec` (dev).
+
+## Configuration
+
+Tune it as needed in `Librix.configure`:
+
+- `google_books_api_key`: Google Books API key (optional).
+- `default_provider`: default provider symbol (e.g., `:google_books`).
+- `http_open_timeout`: connection open timeout in seconds (default: 2).
+- `http_read_timeout`: read timeout in seconds (default: 5).
+- `user_agent`: User-Agent header string (default: `librix/<version>`).
+- `google_books_base_url`: Google Books base URL (default: `https://www.googleapis.com/books/v1`).
+
+## Providers
+
+- Default: `Librix.search(params)` uses the configured provider.
+- Choose explicitly: `Librix.search(params, provider_key: :google_books)`.
+- Get an instance: `Librix.provider(:google_books)`.
+- See what's registered: `Librix::Providers::Registry.keys`.
+
+### Google Books
+
+Search by title: `search(title: "...")`.
+Network and HTTP errors raise `Librix::Error` with descriptive messages.
+
+## Errors
+
+- `Librix::Error` wraps network/HTTP failures.
+- `ArgumentError` for invalid input (e.g., missing title).
+
+## Extending: creating a new provider
+
+Create a class inheriting from `Librix::Providers::Base`, implement `provider_key` and `search(params)`, and register it in the `Registry`.
+
+Minimal example:
+
+```ruby
+module Librix
+  module Providers
+    class OpenLibrary < Base
+      def provider_key
+        :open_library
+      end
+
+      def search(params)
+        # implement request and return
+      end
+
+      Registry.register(self)
+    end
+  end
+end
+```
+
+Then enable usage via:
+
+```ruby
+Librix.configure { |c| c.default_provider = :open_library }
+Librix.search(title: "Clean Code")
+```
 
 ## Development
 
@@ -37,7 +120,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/[USERN
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-## Code of Conduct
-
-Everyone interacting in the Librix project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/librix/blob/master/CODE_OF_CONDUCT.md).
