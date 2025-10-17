@@ -59,6 +59,8 @@ result = provider.search(title: "Clean Code")
 
 Bug reports and pull requests are welcome.
 
+This is my first gem by the way, so feel free to give me any feedback or advise :).
+
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
