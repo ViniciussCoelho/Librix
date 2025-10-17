@@ -1,16 +1,11 @@
 require "uri"
 require "httparty"
-
 module Librix
   module Providers
-    class GoogleBooks < Base
+    class GoogleBooks
       def initialize
         @config = Librix.configuration
         @api_key = @config.google_books_api_key
-      end
-
-      def provider_key
-        :google_books
       end
 
       def search(params)
@@ -47,8 +42,6 @@ module Librix
         body = response&.body.to_s
         body.length > 200 ? body[0, 200] + "..." : body
       end
-
-      Registry.register(self)
     end
   end
 end

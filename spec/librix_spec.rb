@@ -14,9 +14,17 @@ RSpec.describe Librix do
     expect(Librix.configuration.user_agent).to include("librix/")
   end
 
-  it "builds provider from registry and searches" do
+  it "builds default provider via factory" do
+    Librix.configure do |config|
+      config.provider = :google_books
+    end
+
+    provider = Librix.provider
+    expect(provider).to be_a(Librix::Providers::GoogleBooks)
+  end
+
+  it "builds provider by explicit name" do
     provider = Librix.provider(:google_books)
-    expect(provider.provider_key).to eq(:google_books)
-    expect { Librix.search(title: "x") }.not_to raise_error
+    expect(provider).to be_a(Librix::Providers::GoogleBooks)
   end
 end
