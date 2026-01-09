@@ -3,6 +3,7 @@
 require_relative "librix/version"
 require_relative "librix/configuration"
 require_relative "librix/providers/google_books"
+require_relative "librix/providers/open_library"
 require_relative "librix/providers/factory"
 
 module Librix

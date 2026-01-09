@@ -21,7 +21,8 @@ module Librix
 
         def registry
           @registry ||= {
-            google_books: Librix::Providers::GoogleBooks
+            google_books: Librix::Providers::GoogleBooks,
+            open_library: Librix::Providers::OpenLibrary
           }
         end
       end
